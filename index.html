@@ -2,52 +2,135 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Tarea Coctelería</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarea Coctelería - Modern CSS</title>
     <style>
-        body { font-family: sans-serif; background: #f4f4f9; padding: 20px; }
-        .container { display: flex; gap: 20px; }
-        .column { flex: 1; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .card { border-bottom: 1px solid #eee; padding: 10px 0; display: flex; align-items: center; gap: 10px; }
-        img { width: 50px; height: 50px; border-radius: 50%; }
-        button { background: #2c3e50; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px; }
+        /* CSS MODERNO: Uso de Variables y Reset */
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --accent-color: #38bdf8;
+            --text-color: #f1f5f9;
+            --border-radius: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        h1 { text-align: center; margin-bottom: 2rem; color: var(--accent-color); }
+
+        /* CSS GRID: Diseño de columnas moderno */
+        .main-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .column {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px); /* Efecto Glassmorphism */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+        }
+
+        button {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: var(--accent-color);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, filter 0.2s;
+            margin-bottom: 1.5rem;
+        }
+
+        button:hover {
+            transform: scale(1.02);
+            filter: brightness(1.1);
+        }
+
+        /* Estilo de las tarjetas de la lista */
+        .card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            margin-bottom: 0.8rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .card img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
-    <h1>Mi Tarea de Cócteles</h1>
-    <div class="container">
-        <div class="column">
+
+    <h1>🍸 Mi Bar Digital (Back-end + API)</h1>
+
+    <div class="main-container">
+        <section class="column">
             <h2>Local (PHP)</h2>
-            <button onclick="cargarLocal()">Traer de mi PHP</button>
+            <button onclick="cargarLocal()">Consultar Tabla PHP</button>
             <div id="lista-local"></div>
-        </div>
-        <div class="column">
-            <h2>Externo (API)</h2>
-            <button onclick="cargarAPI()">Traer de la API</button>
+        </section>
+
+        <section class="column">
+            <h2>Global (API)</h2>
+            <button onclick="cargarAPI()">Consumir API Externa</button>
             <div id="lista-api"></div>
-        </div>
+        </section>
     </div>
 
     <script>
-        function cargarLocal() {
-            fetch('datos.php')
-                .then(res => res.json())
-                .then(data => {
-                    let html = '';
-                    data.forEach(item => { html += `<div class="card"><strong>${item.nombre}</strong></div>`; });
-                    document.getElementById('lista-local').innerHTML = html;
+        // AJAX Moderno con Fetch
+        async function cargarLocal() {
+            try {
+                const res = await fetch('datos.php');
+                const data = await res.json();
+                let html = '';
+                data.forEach(item => {
+                    html += `<div class="card">
+                                <div>
+                                    <p><strong>${item.nombre}</strong></p>
+                                    <small>${item.tipo}</small>
+                                </div>
+                             </div>`;
                 });
+                document.getElementById('lista-local').innerHTML = html;
+            } catch (e) { console.error("Error local", e); }
         }
 
-        function cargarAPI() {
-            fetch('https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Ordinary_Drink')
-                .then(res => res.json())
-                .then(data => {
-                    let html = '';
-                    data.drinks.slice(0, 5).forEach(drink => {
-                        html += `<div class="card"><img src="${drink.strDrinkThumb}"><strong>${drink.strDrink}</strong></div>`;
-                    });
-                    document.getElementById('lista-api').innerHTML = html;
+        async function cargarAPI() {
+            try {
+                const res = await fetch('https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Ordinary_Drink');
+                const data = await res.json();
+                let html = '';
+                data.drinks.slice(0, 5).forEach(drink => {
+                    html += `<div class="card">
+                                <img src="${drink.strDrinkThumb}" alt="drink">
+                                <strong>${drink.strDrink}</strong>
+                             </div>`;
                 });
+                document.getElementById('lista-api').innerHTML = html;
+            } catch (e) { console.error("Error API", e); }
         }
     </script>
 </body>
